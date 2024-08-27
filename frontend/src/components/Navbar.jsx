@@ -27,6 +27,11 @@ const Navbar = () => {
                         Productos
                     </NavLink>
                 )}
+                  {getUser && (
+                    <NavLink className={setActiveClass} to="/perfil">
+                    Mi perfil
+                </NavLink>
+                )}
             </>
         );
     }

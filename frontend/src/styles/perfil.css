@@ -1,0 +1,21 @@
+.perfil-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .perfil-info {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .perfil-info p {
+    margin: 10px 0;
+  }
+
+  .primary-button {
+    margin-right: 20px;
+  }
+  
