@@ -20,7 +20,7 @@ function App() {
       <Context.Provider value={globalState}>
       <div className='app-container'>
         <Navbar/>
-          <main>
+          <main style={{backgroundColor: '#faf4d3'}}>
             <Routes>
               <Route path='/' element={<Home/>}/>
               <Route path='/login' element={<InicioSesion/>}/>
