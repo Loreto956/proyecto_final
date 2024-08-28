@@ -1,29 +1,31 @@
 import React, { useContext, useEffect, useState } from "react";
-import Context from "../contexts/Context";
+// import Context from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/perfil.css";
 
 const Perfil = () => {
-  const { getUser } = useContext(Context);
+  // const { getUser } = useContext(Context);
+  const { currentUser } = useAuth()
   const navigate = useNavigate();
   const [userData, setUserData] = useState({});
 
   useEffect(() => {
-    if (!getUser) {
+    if (!currentUser) {
       navigate("/login");
     } else {
       // Aquí se puede hacer la solicitud para obtener los datos del usuario
       setUserData({
-        nombre: "Juan",
-        apellido: "Pérez",
-        email: "j.perez@example.com",
+        nombre: currentUser.nombre,
+        apellido: currentUser.apellido,
+        email: currentUser.email,
       });
     }
-  }, [getUser, navigate]);
+  }, [currentUser, navigate]);
 
   return (
     <div className="perfil-container">
-      <h2>Mi Perfil</h2>
+      <h2>Hola {userData.nombre}! Bienvenido a Peluditos shop</h2>
       <div className="perfil-info">
         <p><strong>Nombre:</strong> {userData.nombre}</p>
         <p><strong>Apellido:</strong> {userData.apellido}</p>

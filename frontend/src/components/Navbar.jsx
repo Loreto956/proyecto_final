@@ -1,18 +1,24 @@
 import React, { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import Context from "../contexts/Context";
+// import Context from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/navbar.css"
 
 const Navbar = () => {
 
     const navigate = useNavigate()
-    const {getUser, updateUser} = useContext(Context)
+    const {currentUser, logoutUser} = useAuth()
 
-    const logout = () => {
-        updateUser()
-        window.sessionStorage.removeItem('token')
+    // const logout = () => {
+    //     updateUser()
+    //     window.sessionStorage.removeItem('token')
+    //     navigate('/')
+    //   }
+
+    const handleLogout = () => {
+        logoutUser()
         navigate('/')
-      }
+    }
 
     const setActiveClass = ({isActive}) => (isActive ? "active" : "notActive")
 
@@ -22,12 +28,12 @@ const Navbar = () => {
                 <NavLink className={setActiveClass} to="/">
                     🐾 Peluditos shop
                 </NavLink>
-                {getUser && (
+                {currentUser && (
                     <NavLink className={setActiveClass} to="/productos">
                         Productos
                     </NavLink>
                 )}
-                  {getUser && (
+                  {currentUser && (
                     <NavLink className={setActiveClass} to="/perfil">
                     Mi perfil
                 </NavLink>
@@ -36,7 +42,7 @@ const Navbar = () => {
         );
     }
     const isLogin = () => {
-        if(!getUser){
+        if(!currentUser){
             return (
             <>
                         <NavLink 
@@ -63,7 +69,7 @@ const Navbar = () => {
                         
                         <button 
                             className="secondary-button" 
-                            onClick={logout}
+                            onClick={handleLogout}
                             to='/'>
                                 Cerrar sesión
                         </button>
