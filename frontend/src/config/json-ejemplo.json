@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "nombre": "Comida para Perros Adultos",
+    "precio": 25.99,
+    "imagen": "https://example.com/images/dog_food.jpg"
+  },
+  {
+    "id": "2",
+    "nombre": "Juguete para Gatos",
+    "precio": 7.49,
+    "imagen": "https://example.com/images/cat_toy.jpg"
+  },
+  {
+    "id": "3",
+    "nombre": "Camita para Mascotas",
+    "precio": 35.99,
+    "imagen": "https://example.com/images/pet_bed.jpg"
+  },
+  {
+    "id": "4",
+    "nombre": "Collar para Perro",
+    "precio": 12.99,
+    "imagen": "https://example.com/images/dog_collar.jpg"
+  },
+  {
+    "id": "5",
+    "nombre": "Caja de Arena para Gatos",
+    "precio": 22.50,
+    "imagen": "https://example.com/images/cat_litter_box.jpg"
+  },
+  {
+    "id": "6",
+    "nombre": "Rascador para Gatos",
+    "precio": 29.99,
+    "imagen": "https://example.com/images/cat_scratcher.jpg"
+  },
+  {
+    "id": "7",
+    "nombre": "Hueso de Res para Perros",
+    "precio": 9.99,
+    "imagen": "https://example.com/images/dog_bone.jpg"
+  },
+  {
+    "id": "8",
+    "nombre": "Arnés para Perro",
+    "precio": 18.75,
+    "imagen": "https://example.com/images/dog_harness.jpg"
+  },
+  {
+    "id": "9",
+    "nombre": "Shampoo para Perro",
+    "precio": 14.99,
+    "imagen": "https://example.com/images/dog_shampoo.jpg"
+  },
+  {
+    "id": "10",
+    "nombre": "Comida para Gatos",
+    "precio": 21.49,
+    "imagen": "https://example.com/images/cat_food.jpg"
+  }
+]

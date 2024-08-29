@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ENDPOINT } from '../config/constants'
+import { useAuth } from '../contexts/AuthContext'
 import '../styles/registrarse_iniciar_sesion.css'
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
@@ -16,12 +17,13 @@ const initialForm = {
 
 
 const Registrarse = () => {
+  const {registerUser} = useAuth()
   const navigate = useNavigate()
   const [user, setUser] = useState(initialForm)
 
-  const handleUser = (event) => setUser({ ...user, [event.target.name]: event.target.value })
+  const handleChange = (event) => setUser({ ...user, [event.target.name]: event.target.value })
 
-  const handleForm = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault()
 
     if (
@@ -41,30 +43,38 @@ const Registrarse = () => {
       return window.alert('El formato del email no es correcto!')
     }
 
-    axios.post(ENDPOINT.users, user)
-      .then(() => {
-        window.alert('Usuario registrado con éxito 😀.')
-        navigate('/login')
-      })
-      .catch(({ response: { data } }) => {
-        console.error(data)
-        window.alert(`${data.message} 🙁.`)
-      })
+    const { success, message } = registerUser(user);
+    window.alert(message);
+
+    if (success) {
+      navigate('/login');
+    }
   }
 
-  useEffect(() => {
-    if (window.sessionStorage.getItem('token')) {
-      navigate('/perfil')
-    }
-  }, [navigate])
+  //   axios.post(ENDPOINT.users, user)
+  //     .then(() => {
+  //       window.alert('Usuario registrado con éxito 😀.')
+  //       navigate('/login')
+  //     })
+  //     .catch(({ response: { data } }) => {
+  //       console.error(data)
+  //       window.alert(`${data.message} 🙁.`)
+  //     })
+  // }
+
+  // useEffect(() => {
+  //   if (window.sessionStorage.getItem('token')) {
+  //     navigate('/perfil')
+  //   }
+  // }, [navigate])
 
   return (
-    <form onSubmit={handleForm}>
+    <form onSubmit={handleSubmit}>
       <h3>Registrar nuevo usuario</h3>
       <div>
         <input
           value={user.nombre}
-          onChange={handleUser}
+          onChange={handleChange}
           name='nombre'
           className='form-input'
           placeholder='Nombre'
@@ -73,7 +83,7 @@ const Registrarse = () => {
       <div>
         <input
           value={user.apellido}
-          onChange={handleUser}
+          onChange={handleChange}
           name='apellido'
           className='form-input'
           placeholder='Apellido'
@@ -82,7 +92,7 @@ const Registrarse = () => {
       <div>
         <input
           value={user.email}
-          onChange={handleUser}
+          onChange={handleChange}
           name='email'
           className='form-input'
           placeholder='Correo electrónico'
@@ -91,7 +101,7 @@ const Registrarse = () => {
       <div>
         <input
           value={user.password}
-          onChange={handleUser}
+          onChange={handleChange}
           className='form-input'
           name='password'
           type='password'
@@ -101,7 +111,7 @@ const Registrarse = () => {
       <div>
         <input
           value={user.confirmedPassword}
-          onChange={handleUser}
+          onChange={handleChange}
           className='form-input'
           name='confirmedPassword'
           type='password'

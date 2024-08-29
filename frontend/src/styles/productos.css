@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .productos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -38,3 +39,40 @@
   font-size: 16px;
   margin: 5px 0;
 }
+=======
+.productos-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .productos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .producto-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .producto-card img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  
+  .producto-card h3 {
+    margin: 15px 0;
+    font-size: 18px;
+  }
+  
+  .producto-card p {
+    margin: 10px 0;
+    font-size: 16px;
+  }
+  
+>>>>>>> 694df8e81c34c9e4427a5838be1176fec2b6b971

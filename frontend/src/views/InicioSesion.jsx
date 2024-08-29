@@ -1,60 +1,66 @@
 import React from "react";
-import axios from 'axios'
+// import axios from 'axios'
 import { useState, useContext } from 'react'
 import { useNavigate } from "react-router-dom";
-import { ENDPOINT } from "../config/constants";
-import Context from "../contexts/Context";
+// import { ENDPOINT } from "../config/constants";
+// import Context from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import '../styles/registrarse_iniciar_sesion.css'
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
 const initialForm = { email: '', password: '' }
 
-const handleUser = (event) => setUser({ ...user, [event.target.name]: event.target.value })
-
-
-
 const InicioSesion = () =>{
 
+    const {loginUser} = useAuth()
     const navigate = useNavigate()
-    const [user, setUser] = useState(initialForm)
-    const { updateUser } = useContext(Context)
+    const [credentials, setCredentials] = useState(initialForm)
+    // const { updateUser } = useContext(Context)
 
-    const handleUser = (event) => setUser({ ...user, [event.target.name]: event.target.value })
+    const handleChange = (event) => setCredentials({ ...credentials, [event.target.name]: event.target.value })
 
-    const handleForm = (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault()
     
-        if (!user.email.trim() || !user.password.trim()) {
+        if (!credentials.email.trim() || !credentials.password.trim()) {
           return window.alert('Email y password obligatorias.')
         }
     
-        if (!emailRegex.test(user.email)) {
+        if (!emailRegex.test(credentials.email)) {
           return window.alert('El formato del email no es correcto!')
         }
-    
-        axios.post(ENDPOINT.login, user)
-          .then(({ data }) => {
-            window.sessionStorage.setItem('token', data.token)
-            window.alert('Usuario identificado con éxito 😀.')
-            updateUser({ id: data.userId, email: user.email }); // Asegúrate de incluir el ID del usuario
-            navigate('/perfil')
-          })
-          .catch(({ response: { data } }) => {
-            console.error(data)
-            window.alert(`${data.message} 🙁.`)
-          })
+
+        const { success, message } = loginUser(credentials.email, credentials.password);
+        window.alert(message);
+
+        if (success) {
+          navigate('/perfil');
+        }
+
+
+        // axios.post(ENDPOINT.login, user)
+        //   .then(({ data }) => {
+        //     window.sessionStorage.setItem('token', data.token)
+        //     window.alert('Usuario identificado con éxito 😀.')
+        //     updateUser({})
+        //     navigate('/perfil')
+        //   })
+        //   .catch(({ response: { data } }) => {
+        //     console.error(data)
+        //     window.alert(`${data.message} 🙁.`)
+        //   })
       }
     
 
 
       return (
-        <form onSubmit={handleForm}>
-          <h1>Iniciar Sesión</h1>
+        <form onSubmit={handleSubmit}>
+          <h3>Iniciar Sesión</h3>
           <div>
             <input
-              value={user.email}
-              onChange={handleUser}
+              value={credentials.email}
+              onChange={handleChange}
               type='email'
               name='email'
               className='form-input'
@@ -63,8 +69,8 @@ const InicioSesion = () =>{
           </div>
           <div>
             <input
-              value={user.password}
-              onChange={handleUser}
+              value={credentials.password}
+              onChange={handleChange}
               type='password'
               name='password'
               className='form-input'

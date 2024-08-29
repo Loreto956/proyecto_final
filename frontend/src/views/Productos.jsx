@@ -50,6 +50,16 @@ const Productos = () => {
                   onClick={() => navigate(`/producto/${producto.id}`)}> 
                   Ver Detalle
                 </button>
+                <button 
+              className="like-button"
+              onClick={() => handleLike(producto.id)}
+            >
+              <IconStar
+                filled={likedProducts.includes(producto.id)}
+                size="24px"
+                color="gold"
+              />
+            </button>
               </div>
             </div>
           </div>
