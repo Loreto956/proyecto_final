@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-// import Context from "../contexts/AuthContext";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/navbar.css"
 
@@ -8,12 +7,6 @@ const Navbar = () => {
 
     const navigate = useNavigate()
     const {currentUser, logoutUser} = useAuth()
-
-    // const logout = () => {
-    //     updateUser()
-    //     window.sessionStorage.removeItem('token')
-    //     navigate('/')
-    //   }
 
     const handleLogout = () => {
         logoutUser()

@@ -1,9 +1,6 @@
 import React from "react";
-// import axios from 'axios'
-import { useState, useContext } from 'react'
+import { useState} from 'react'
 import { useNavigate } from "react-router-dom";
-// import { ENDPOINT } from "../config/constants";
-// import Context from "../contexts/AuthContext";
 import { useAuth } from "../contexts/AuthContext";
 import '../styles/registrarse_iniciar_sesion.css'
 
@@ -16,7 +13,6 @@ const InicioSesion = () =>{
     const {loginUser} = useAuth()
     const navigate = useNavigate()
     const [credentials, setCredentials] = useState(initialForm)
-    // const { updateUser } = useContext(Context)
 
     const handleChange = (event) => setCredentials({ ...credentials, [event.target.name]: event.target.value })
 
@@ -37,19 +33,6 @@ const InicioSesion = () =>{
         if (success) {
           navigate('/perfil');
         }
-
-
-        // axios.post(ENDPOINT.login, user)
-        //   .then(({ data }) => {
-        //     window.sessionStorage.setItem('token', data.token)
-        //     window.alert('Usuario identificado con éxito 😀.')
-        //     updateUser({})
-        //     navigate('/perfil')
-        //   })
-        //   .catch(({ response: { data } }) => {
-        //     console.error(data)
-        //     window.alert(`${data.message} 🙁.`)
-        //   })
       }
     
 

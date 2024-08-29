@@ -1,41 +1,130 @@
-import React, { useContext, useEffect, useState } from "react";
-// import Context from "../contexts/AuthContext";
-import { useAuth } from "../contexts/AuthContext";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/perfil.css";
+import usuariosData from "../data/usuarios.json";
+import perfilImg from "../assets/perfil.png"; 
 
 const Perfil = () => {
-  // const { getUser } = useContext(Context);
-  const { currentUser } = useAuth()
-  const navigate = useNavigate();
-  const [userData, setUserData] = useState({});
 
-  useEffect(() => {
-    if (!currentUser) {
-      navigate("/login");
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState({
+    nombre: "",
+    apellido: "",
+    direccion: "",
+    telefono: "",
+    email: "",
+    fecha_registro: "",
+  });
+
+
+useEffect(() => {
+    if (currentUser) {
+      setUserData(currentUser);
     } else {
-      // Aquí se puede hacer la solicitud para obtener los datos del usuario
-      setUserData({
-        nombre: currentUser.nombre,
-        apellido: currentUser.apellido,
-        email: currentUser.email,
-      });
+      const usuarioLocal = usuariosData.find(user => user.email === "juan.perez@example.com");
+      if (usuarioLocal) {
+        setUserData(usuarioLocal);
+      } else {
+        navigate("/login");
+      }
     }
   }, [currentUser, navigate]);
 
+
+  // Manejar la edición de los campos de usuario
+  const handleInputChange = (e) => {
+    setUserData({
+      ...userData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   return (
-    <div className="perfil-container">
-      <h2>Hola {userData.nombre}! Bienvenido a Peluditos shop</h2>
-      <div className="perfil-info">
-        <p><strong>Nombre:</strong> {userData.nombre}</p>
-        <p><strong>Apellido:</strong> {userData.apellido}</p>
-        <p><strong>Email:</strong> {userData.email}</p>
-        <button className="primary-button" onClick={() => navigate("/productos")}>
-          Ver mis productos
-        </button>
-        <button className="primary-button" onClick={() => navigate("/favoritos")}>
-          Ver mis favoritos
-        </button>
+    <div className="container mt-5">
+        
+      <div className="row">
+        <div className="col-md-4">
+          <img src={perfilImg} alt="Perfil" className="img-fluid rounded-circle mb-4" />
+        </div>
+        <div className="col-md-8">
+          <h2>Hola {userData.nombre}! Bienvenido a Peluditos Shop</h2>
+          <form>
+            <div className="form-group">
+              <label>Nombre</label>
+              <input
+                type="text"
+                className="form-control"
+                name="nombre"
+                value={userData.nombre}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Apellido</label>
+              <input
+                type="text"
+                className="form-control"
+                name="apellido"
+                value={userData.apellido}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Dirección</label>
+              <input
+                type="text"
+                className="form-control"
+                name="direccion"
+                value={userData.direccion}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Teléfono</label>
+              <input
+                type="text"
+                className="form-control"
+                name="telefono"
+                value={userData.telefono}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                className="form-control"
+                name="email"
+                value={userData.email}
+                onChange={handleInputChange}
+                disabled
+              />
+            </div>
+            <div className="form-group">
+              <label>Fecha de Registro</label>
+              <input
+                type="text"
+                className="form-control"
+                name="fecha_registro"
+                value={userData.fecha_registro}
+                readOnly
+              />
+            </div>
+          </form>
+          <div className="mt-4">
+            <button className="btn btn-warning me-3" onClick={() => navigate("/mis-productos")}>
+              Mis productos
+            </button>
+            <button className="btn btn-warning me-3" onClick={() => navigate("/favoritos")}>
+              Mis favoritos
+            </button>
+            <button className="btn btn-warning" onClick={() => navigate("/productos")}>
+              Ver tienda
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

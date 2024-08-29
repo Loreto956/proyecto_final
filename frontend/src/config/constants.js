@@ -1,6 +1,7 @@
-export const URLBASE = 'http://localhost:3000'
+export const URLBASE = 'http://localhost:3000' // ruta del backend
 
 export const ENDPOINT = {
   login: `${URLBASE}/login`,
-  users: `${URLBASE}/usuarios`
+  users: `${URLBASE}/usuarios`,
+  productos: `${URLBASE}/productos`,
 }

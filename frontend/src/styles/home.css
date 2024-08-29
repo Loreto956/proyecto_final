@@ -10,7 +10,7 @@
   
 
 img {
-    width: 40%; 
+    width: 70%; 
     height: auto;
     object-fit: cover;
     animation: slideLeft 2s forwards; 

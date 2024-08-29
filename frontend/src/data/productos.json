@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "nombre": "Juguete para perro",
+    "descripcion": "Un juguete divertido para tu perro.",
+    "marca": "Joy",
+    "imagen": "../assets/imagenNoDisponible.png",
+    "categoria": "Perro",
+    "precio": 10000,
+    "stock": 5,
+    "user_id": 1
+  },
+  {
+    "id": 2,
+    "nombre": "Comida para gato",
+    "descripcion": "Comida saludable para tu gato.",
+    "marca": "Joy",
+    "imagen": "../assets/imagenNoDisponible.png",
+    "categoria": "Gato",
+    "precio": 5000,
+    "stock": 10,
+    "user_id": 2
+  },
+  {
+    "id": 3,
+    "nombre": "Collar luminoso",
+    "descripcion": "Collar seguro y visible para paseos nocturnos.",
+    "marca": "LuzPet",
+    "imagen": "../assets/imagenNoDisponible.png",
+    "categoria": "Perro",
+    "precio": 8000,
+    "stock": 15,
+    "user_id": 3
+  }
+]
