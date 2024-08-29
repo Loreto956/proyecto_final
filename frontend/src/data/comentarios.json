@@ -1,0 +1,41 @@
+[
+    {
+      "producto_id": 1,
+      "comentarios": [
+        {
+          "usuario_comentario_id": 3,
+          "usuario_producto_id": 1,
+          "rating": 4,
+          "comentario": "¡Mi perro lo ama!"
+        },
+        {
+          "usuario_comentario_id": 2,
+          "usuario_producto_id": 1,
+          "rating": 5,
+          "comentario": "Excelente calidad."
+        }
+      ]
+    },
+    {
+      "producto_id": 2,
+      "comentarios": [
+        {
+          "usuario_comentario_id": 1,
+          "usuario_producto_id": 2,
+          "rating": 5,
+          "comentario": "A mi gato le encanta."
+        }
+      ]
+    },
+    {
+      "producto_id": 3,
+      "comentarios": [
+        {
+          "usuario_comentario_id": 2,
+          "usuario_producto_id": 3,
+          "rating": 5,
+          "comentario": "Muy útil para los paseos nocturnos."
+        }
+      ]
+    }
+  ]

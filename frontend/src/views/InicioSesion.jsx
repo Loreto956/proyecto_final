@@ -37,7 +37,7 @@ const InicioSesion = () =>{
           .then(({ data }) => {
             window.sessionStorage.setItem('token', data.token)
             window.alert('Usuario identificado con éxito 😀.')
-            updateUser({})
+            updateUser({ id: data.userId, email: user.email }); // Asegúrate de incluir el ID del usuario
             navigate('/perfil')
           })
           .catch(({ response: { data } }) => {

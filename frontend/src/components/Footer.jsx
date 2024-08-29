@@ -4,7 +4,7 @@ import '../styles/footer.css'
 const Footer = () => {
     return(
         <footer>
-            <p>Página creada por Constanza Águila, Loreto Villouta y Francisco Labbe</p>
+            <p>© 2024 Página creada por Constanza Águila, Loreto Villouta y Francisco Labbe</p>
         </footer>
     )
 }
