@@ -3,6 +3,7 @@ import {Routes, Route } from 'react-router-dom'
 // import Context from './contexts/AuthContext'
 // import useAuth from './hooks/useAuth'
 import { AuthProvider } from './contexts/AuthContext'
+import ShopProvider from './contexts/FavsContext'
 import Navbar from './components/Navbar'
 import Home from './views/Home'
 import Footer from './components/Footer'
@@ -11,6 +12,7 @@ import Registrarse from './views/Registrarse'
 import Perfil from './views/Perfil'
 import Productos from './views/Productos'
 import DetalleProducto from './views/DetalleProducto'
+import Favoritos from './views/Favoritos'
 
 
 function App() {
@@ -20,6 +22,7 @@ function App() {
   return (
     <>
       <AuthProvider>
+      <ShopProvider>
       <div className='app-container'>
         <Navbar/>
           <main style={{backgroundColor: '#faf4d3'}}>
@@ -28,12 +31,14 @@ function App() {
               <Route path='/login' element={<InicioSesion/>}/>
               <Route path='/registrarse' element={<Registrarse/>}/>
               <Route path='/perfil' element={<Perfil/>}/>
+              <Route path='/favoritos' element={<Favoritos/>}/>
               <Route path='/productos' element={<Productos/>}/>
               <Route path='/producto/id' element={<DetalleProducto/>}/> 
             </Routes>
           </main>
         <Footer/>
         </div>
+        </ShopProvider>
       </AuthProvider>
     </>
   )
