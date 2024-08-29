@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const useAuth = () => {
-  const [user, setUser] = useState(true);
+  const [user, setUser] = useState(null);
 
   const updateUser = (newUser) => setUser(newUser);
 

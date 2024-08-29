@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import productosData from "../data/productos.json"; 
 import usuariosData from "../data/usuarios.json"; 
 import comentariosData from "../data/comentarios.json"; 
 import { useParams } from "react-router-dom"; 
 import productoImg from "../assets/imagenNoDisponible.png";
+import { ProductsContext } from "../contexts/FavsContext";
 
 const DetalleProducto = () => {
   const { id } = useParams(); 
+  const { likedProducts, handleLike } = useContext(ProductsContext);
   const [producto, setProducto] = useState(null);
   const [vendedor, setVendedor] = useState(null);
   const [comentarios, setComentarios] = useState([]);
-  const [favorito, setFavorito] = useState(false);
   const [nuevoComentario, setNuevoComentario] = useState(""); 
   const [rating, setRating] = useState(0); 
   const [cantidad, setCantidad] = useState(1);
@@ -32,10 +33,6 @@ const DetalleProducto = () => {
       }
     }
   }, [id]);
-
-  const handleFavorito = () => {
-    setFavorito(!favorito);
-  };
 
   const handleIncrementarCantidad = () => {
     if (cantidad < producto.stock) {
@@ -79,10 +76,10 @@ const DetalleProducto = () => {
             style={{ maxHeight: "400px" }}
           />
           <button
-            className={`btn ${favorito ? "btn-danger" : "btn-outline-danger"} mt-3`}
-            onClick={handleFavorito}
+            className={`btn ${likedProducts.includes(producto.id) ? "btn-danger" : "btn-outline-danger"} mt-3`}
+            onClick={() => handleLike(producto.id)}
           >
-            {favorito ? "❤️ Agregado a Favoritos" : "🤍 Agregar a Favoritos"}
+            {likedProducts.includes(producto.id) ? "❤️ Agregado a Favoritos" : "🤍 Agregar a Favoritos"}
           </button>
         </div>
 

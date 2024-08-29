@@ -1,12 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Context from "../contexts/Context";
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/perfil.css";
-import usuariosData from "../data/usuarios.json"; // Importamos el JSON local de usuarios
+import usuariosData from "../data/usuarios.json";
 import perfilImg from "../assets/perfil.png"; 
 
 const Perfil = () => {
-  const { getUser } = useContext(Context);
+
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     nombre: "",
@@ -17,17 +18,20 @@ const Perfil = () => {
     fecha_registro: "",
   });
 
-  // Efecto para cargar los datos del usuario desde el JSON o contexto
-  useEffect(() => {
-    const usuarioLocal = usuariosData.find(user => user.email === "juan.perez@example.com");
-    if (usuarioLocal) {
-      setUserData(usuarioLocal);
-    } else if (!getUser) {
-      navigate("/login");
+
+useEffect(() => {
+    if (currentUser) {
+      setUserData(currentUser);
     } else {
-      setUserData(getUser);
+      const usuarioLocal = usuariosData.find(user => user.email === "juan.perez@example.com");
+      if (usuarioLocal) {
+        setUserData(usuarioLocal);
+      } else {
+        navigate("/login");
+      }
     }
-  }, [getUser, navigate]);
+  }, [currentUser, navigate]);
+
 
   // Manejar la edición de los campos de usuario
   const handleInputChange = (e) => {
@@ -95,7 +99,7 @@ const Perfil = () => {
                 name="email"
                 value={userData.email}
                 onChange={handleInputChange}
-                disabled // Email no editable
+                disabled
               />
             </div>
             <div className="form-group">
@@ -113,7 +117,7 @@ const Perfil = () => {
             <button className="btn btn-warning me-3" onClick={() => navigate("/mis-productos")}>
               Mis productos
             </button>
-            <button className="btn btn-warning me-3" onClick={() => navigate("/mis-favoritos")}>
+            <button className="btn btn-warning me-3" onClick={() => navigate("/favoritos")}>
               Mis favoritos
             </button>
             <button className="btn btn-warning" onClick={() => navigate("/productos")}>

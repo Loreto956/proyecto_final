@@ -117,7 +117,6 @@ const MisProductos = () => {
         </tbody>
       </table>
 
-      {/* <h3>Agregar/Editar Producto</h3> */}
       <div className="form-group">
         <input
           type="text"

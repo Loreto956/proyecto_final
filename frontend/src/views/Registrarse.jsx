@@ -1,8 +1,5 @@
-
-import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ENDPOINT } from '../config/constants'
 import { useAuth } from '../contexts/AuthContext'
 import '../styles/registrarse_iniciar_sesion.css'
 
@@ -50,23 +47,6 @@ const Registrarse = () => {
       navigate('/login');
     }
   }
-
-  //   axios.post(ENDPOINT.users, user)
-  //     .then(() => {
-  //       window.alert('Usuario registrado con éxito 😀.')
-  //       navigate('/login')
-  //     })
-  //     .catch(({ response: { data } }) => {
-  //       console.error(data)
-  //       window.alert(`${data.message} 🙁.`)
-  //     })
-  // }
-
-  // useEffect(() => {
-  //   if (window.sessionStorage.getItem('token')) {
-  //     navigate('/perfil')
-  //   }
-  // }, [navigate])
 
   return (
     <form onSubmit={handleSubmit}>

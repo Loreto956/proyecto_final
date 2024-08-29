@@ -1,22 +1,29 @@
-import React, {  createContext, useState, useEffect} from 'react'
+import React, {  createContext, useState, useEffect } from 'react'
+import axios from 'axios';
+import productosData from '../data/productos.json';
+import { ENDPOINT } from '../config/constants';
+import { useAuth } from './AuthContext';
 
 export const ProductsContext = createContext();
 
 const ShopProvider = ({ children }) => {
-
+    const { currentUser } = useAuth();
     const [products, setProducts] = useState([]);
     const [likedProducts, setLikedProducts] = useState([]);
 
     useEffect(() => {
-        fetch('https://66cfc346181d059277dc42d0.mockapi.io/api/v1/productos')
-            .then(response => response.json())
-            .then(data => {
-                setProducts(data)
-            })
-            .catch(error => {
-                console.error('Error al obtener los datos:', error);
-              });
-    }, [])
+        const fetchProductos = async () => {
+          try {
+            const response = await axios.get(ENDPOINT.productos);
+            setProducts(response.data);
+          } catch (error) {
+            console.error("Error al cargar productos desde el backend, cargando datos locales", error);
+            setProducts(productosData); // Usar JSON local si el backend no responde
+          }
+        };
+    
+        fetchProductos();
+      }, []);
 
     const handleLike = (productId) => {
         setLikedProducts(prevLikedProducts =>

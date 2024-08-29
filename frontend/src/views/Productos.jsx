@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { ENDPOINT } from "../config/constants"; // URL de la Api
 import productosData from "../data/productos.json"; // Importar JSON local
 import { useNavigate } from "react-router-dom"; // Para la navegación a detalles
 import productoImg from "../assets/imagenNoDisponible.png"
+import { ProductsContext } from "../contexts/FavsContext"
 
 const Productos = () => {
   const [productos, setProductos] = useState([]); // Estado para almacenar productos
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false); // Estado de error
   const navigate = useNavigate();
+  const { likedProducts, handleLike } = useContext(ProductsContext);
 
   // Efecto para cargar los productos desde la API o desde los datos locales
   useEffect(() => {
@@ -22,7 +24,7 @@ const Productos = () => {
         setProductos(productosData); // Usar el JSON local en caso de fallo
         setHasError(true); // Establecer el estado de error
       } finally {
-        setLoading(false); // Terminar la carga
+        setLoading(false);
       }
     };
     fetchProductos();
@@ -46,20 +48,20 @@ const Productos = () => {
                 <h5 className="card-title">{producto.nombre}</h5>
                 <p className="card-text">${new Intl.NumberFormat('es-ES').format(producto.precio)}</p>
                 <button 
-                  className="btn btn-warning"
+                  className="btn btn-warning me-3" 
                   onClick={() => navigate(`/producto/${producto.id}`)}> 
                   Ver Detalle
                 </button>
                 <button 
-              className="like-button"
-              onClick={() => handleLike(producto.id)}
-            >
-              <IconStar
-                filled={likedProducts.includes(producto.id)}
-                size="24px"
-                color="gold"
-              />
-            </button>
+                  className={`btn ${likedProducts.includes(producto.id) ? "btn-danger" : "btn-outline-danger"}`}
+                  onClick={() => handleLike(producto.id)}
+                >
+                  {likedProducts.includes(producto.id) ? "❤️" : "🤍"}
+                </button>
+                <button 
+                className="btn btn-success mt-3">
+                    Agregar al carrito
+                </button>
               </div>
             </div>
           </div>
