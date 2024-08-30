@@ -1,3 +1,4 @@
+import { CartContext } from "../contexts/CartContext";
 import React, { useState, useEffect, useContext } from "react";
 import productosData from "../data/productos.json"; 
 import usuariosData from "../data/usuarios.json"; 
@@ -16,6 +17,7 @@ const DetalleProducto = () => {
   const [rating, setRating] = useState(0); 
   const [cantidad, setCantidad] = useState(1);
   const [error, setError] = useState(""); 
+  const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
     const productoEncontrado = productosData.find((prod) => prod.id === parseInt(id));
@@ -59,6 +61,10 @@ const DetalleProducto = () => {
     setComentarios([...comentarios, comentario]); 
     setNuevoComentario(""); 
     setRating(0); 
+  };
+
+  const handleAddToCart = () => {
+    addToCart({ ...producto, quantity: cantidad });
   };
 
   if (!producto || !vendedor) {
@@ -112,7 +118,7 @@ const DetalleProducto = () => {
             >
               +
             </button>
-            <button className="btn btn-warning m-3">Agregar al Carrito</button>
+            <button className="btn btn-warning m-3" onClick={handleAddToCart}>Agregar al Carrito</button>
           </div>
           <p>Stock disponible: {producto.stock}</p>
           {error && <div className="alert alert-danger mt-3">{error}</div>}

@@ -17,21 +17,24 @@ const Navbar = () => {
 
     const renderLinks = () => {
         return (
-            <>
-                <NavLink className={setActiveClass} to="/">
-                    🐾 Peluditos shop
+          <>
+            <NavLink className={setActiveClass} to="/">
+              🐾 Peluditos shop
+            </NavLink>
+            {currentUser && (
+              <>
+                <NavLink className={setActiveClass} to="/productos">
+                  Productos
                 </NavLink>
-                {currentUser && (
-                    <NavLink className={setActiveClass} to="/productos">
-                        Productos
-                    </NavLink>
-                )}
-                  {currentUser && (
-                    <NavLink className={setActiveClass} to="/perfil">
-                    Mi perfil
+                <NavLink className={setActiveClass} to="/perfil">
+                  Mi perfil
                 </NavLink>
-                )}
-            </>
+                <NavLink className={setActiveClass} to="/carrito">
+                  Carrito
+                </NavLink>
+              </>
+            )}
+          </>
         );
     }
     const isLogin = () => {

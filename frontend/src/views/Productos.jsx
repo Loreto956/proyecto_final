@@ -1,3 +1,4 @@
+import { CartContext } from "../contexts/CartContext";
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { ENDPOINT } from "../config/constants"; // URL de la Api
@@ -7,6 +8,7 @@ import productoImg from "../assets/imagenNoDisponible.png"
 import { ProductsContext } from "../contexts/FavsContext"
 
 const Productos = () => {
+  const { addToCart } = useContext(CartContext);
   const [productos, setProductos] = useState([]); // Estado para almacenar productos
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false); // Estado de error
@@ -59,8 +61,10 @@ const Productos = () => {
                   {likedProducts.includes(producto.id) ? "❤️" : "🤍"}
                 </button>
                 <button 
-                className="btn btn-success mt-3">
-                    Agregar al carrito
+                  className="btn btn-success mt-3"
+                  onClick={() => addToCart(producto)}
+                >
+                  Agregar al carrito
                 </button>
               </div>
             </div>
