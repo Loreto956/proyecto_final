@@ -1,15 +1,14 @@
-import { CartContext } from "../contexts/CartContext";
-import React, { useState, useEffect, useContext } from "react";
-import productosData from "../data/productos.json"; 
-import usuariosData from "../data/usuarios.json"; 
-import comentariosData from "../data/comentarios.json"; 
-import { useParams } from "react-router-dom"; 
-import productoImg from "../assets/imagenNoDisponible.png";
-import { ProductsContext } from "../contexts/FavsContext";
+import React, { useState, useEffect, useContext } from 'react';
+import { useParams } from 'react-router-dom';
+import { CartContext } from '../contexts/CartContext';
+import { ProductsContext } from '../contexts/FavsContext';
+import { useAuth } from '../contexts/AuthContext';
+import comentariosData from '../data/comentarios.json'
 
 const DetalleProducto = () => {
   const { id } = useParams(); 
-  const { likedProducts, handleLike } = useContext(ProductsContext);
+  const { products, likedProducts, handleLike } = useContext(ProductsContext);
+  const { users, currentUser } = useAuth(); // Accede a los usuarios y el usuario actual
   const [producto, setProducto] = useState(null);
   const [vendedor, setVendedor] = useState(null);
   const [comentarios, setComentarios] = useState([]);
@@ -20,13 +19,16 @@ const DetalleProducto = () => {
   const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
-    const productoEncontrado = productosData.find((prod) => prod.id === parseInt(id));
+    // Simula la carga del producto
+    const productoEncontrado = products.find((prod) => prod.id === parseInt(id));
     setProducto(productoEncontrado);
 
     if (productoEncontrado) {
-      const usuarioEncontrado = usuariosData.find((user) => user.id === productoEncontrado.user_id);
+      // Busca al vendedor
+      const usuarioEncontrado = users.find((user) => user.id === productoEncontrado.user_id);
       setVendedor(usuarioEncontrado);
 
+      // Busca los comentarios del producto
       const comentariosProducto = comentariosData.find(
         (comentario) => comentario.producto_id === productoEncontrado.id
       );
@@ -34,7 +36,7 @@ const DetalleProducto = () => {
         setComentarios(comentariosProducto.comentarios);
       }
     }
-  }, [id]);
+  }, [id, users]);
 
   const handleIncrementarCantidad = () => {
     if (cantidad < producto.stock) {
@@ -53,8 +55,13 @@ const DetalleProducto = () => {
   };
 
   const handleAgregarComentario = () => {
+    if (!currentUser) {
+      setError("Debes estar logueado para agregar un comentario.");
+      return;
+    }
+
     const comentario = {
-      usuario: "Usuario Actual", 
+      usuario_comentario_id: currentUser.id, // Usa el ID del usuario actual
       rating,
       comentario: nuevoComentario,
     };
@@ -67,6 +74,10 @@ const DetalleProducto = () => {
     addToCart({ ...producto, quantity: cantidad });
   };
 
+  const formatPrice = (price) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+
   if (!producto || !vendedor) {
     return <div>Cargando producto...</div>;
   }
@@ -76,7 +87,7 @@ const DetalleProducto = () => {
       <div className="row">
         <div className="col-md-6 d-flex flex-column align-items-center">
           <img
-            src={productoImg}
+            src={producto.imagen}
             alt={producto.nombre}
             className="img-fluid mb-4"
             style={{ maxHeight: "400px" }}
@@ -93,7 +104,7 @@ const DetalleProducto = () => {
         <div className="col-md-6">
           <small className="text-muted">Vendedor: {vendedor?.nombre} {vendedor?.apellido}</small>
           <h2>{producto.nombre}</h2>
-          <h4>${new Intl.NumberFormat('es-ES').format(producto.precio)}</h4>
+          <h4>${formatPrice(producto.precio)}</h4>
           <p>{producto.descripcion}</p>
           
           {/* Sección para agregar al carrito */}
@@ -157,15 +168,18 @@ const DetalleProducto = () => {
         <div className="mt-4">
           <h5>Comentarios</h5>
           {comentarios.length > 0 ? (
-            comentarios.map((comentario, index) => (
-              <div key={index} className="mb-3">
-                <strong>{usuariosData.find(user => user.id === comentario.usuario_comentario_id)?.nombre || "Usuario Desconocido"}</strong> -{" "}
-                <span style={{ color: "gold" }}>
-                  {"★".repeat(comentario.rating)}
-                </span>
-                <p>{comentario.comentario}</p>
-              </div>
-            ))
+            comentarios.map((comentario, index) => {
+              const usuarioComentario = users.find(user => user.id === comentario.usuario_comentario_id);
+              return (
+                <div key={index} className="mb-3">
+                  <strong>{usuarioComentario?.nombre || "Usuario Desconocido"}</strong> -{" "}
+                  <span style={{ color: "gold" }}>
+                    {"★".repeat(comentario.rating)}
+                  </span>
+                  <p>{comentario.comentario}</p>
+                </div>
+              );
+            })
           ) : (
             <p>No hay comentarios aún.</p>
           )}

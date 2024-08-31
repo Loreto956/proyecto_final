@@ -1,10 +1,11 @@
-import React, { useState, useContext, useEffect } from "react";
-import productosData from "../data/productos.json"; // Importamos el JSON de productos
-import Context from "../contexts/Context"; // Contexto para obtener el usuario actual
+import React, { useState, useContext } from "react";
+import { useAuth } from "../contexts/AuthContext"; // Contexto para obtener el usuario actual
+import { ProductsContext } from "../contexts/FavsContext";
+import '../styles/misProductos.css'
 
 const MisProductos = () => {
-  const { getUser } = useContext(Context);
-  const [productos, setProductos] = useState([]);
+  const { currentUser } = useAuth();
+  const { products, setProducts } = useContext(ProductsContext);
   const [nuevoProducto, setNuevoProducto] = useState({
     nombre: "",
     descripcion: "",
@@ -13,24 +14,19 @@ const MisProductos = () => {
     precio: "",
     stock: "",
     imagen: "",
-    user_id: getUser?.id || 1, // Asignar el ID del usuario actual
+    user_id: currentUser?.id || 1, // Asignar el ID del usuario actual
   });
   const [imagenPreview, setImagenPreview] = useState("");
 
-  useEffect(() => {
-    if (getUser) {
-      // Filtrar los productos que pertenecen al usuario actual
-      const productosUsuario = productosData.filter(
-        (producto) => producto.user_id === getUser.id
-      );
-      setProductos(productosUsuario);
-    }
-  }, [getUser]);
+  // Sincronizar misProductos con los productos del usuario actual
+  const misProductos = products.filter(
+    (producto) => producto.user_id === currentUser?.id
+  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === "precio") {
-      // Validar que solo se ingresen números en el campo precio
+    if (name === "precio" || name === "stock") {
+      // Validar que solo se ingresen números en los campos precio y stock
       if (!isNaN(value) && Number(value) >= 0) {
         setNuevoProducto({
           ...nuevoProducto,
@@ -55,7 +51,19 @@ const MisProductos = () => {
   };
 
   const agregarProducto = () => {
-    setProductos([...productos, { ...nuevoProducto, id: productos.length + 1 }]);
+    if (nuevoProducto.id) {
+      // Actualizar un producto existente
+      const productosActualizados = products.map((producto) =>
+        producto.id === nuevoProducto.id ? nuevoProducto : producto
+      );
+      setProducts(productosActualizados);
+    } else {
+      // Añadir un nuevo producto
+      const productoConId = { ...nuevoProducto, id: products.length + 1 };
+      setProducts([...products, productoConId]);
+    }
+
+    // Limpiar el formulario
     setNuevoProducto({
       nombre: "",
       descripcion: "",
@@ -64,18 +72,21 @@ const MisProductos = () => {
       precio: "",
       stock: "",
       imagen: "",
-      user_id: getUser.id,
+      user_id: currentUser?.id,
     });
     setImagenPreview("");
   };
 
   const eliminarProducto = (id) => {
-    const nuevosProductos = productos.filter(producto => producto.id !== id);
-    setProductos(nuevosProductos);
+    // Filtrar los productos para eliminar el producto con el id especificado
+    const nuevosProductos = products.filter(producto => producto.id !== id);
+
+    // Actualizar el estado de products
+    setProducts(nuevosProductos);
   };
 
   const editarProducto = (id) => {
-    const productoAEditar = productos.find(producto => producto.id === id);
+    const productoAEditar = products.find(producto => producto.id === id);
     setNuevoProducto(productoAEditar);
     setImagenPreview(productoAEditar.imagen);
   };
@@ -97,7 +108,7 @@ const MisProductos = () => {
           </tr>
         </thead>
         <tbody>
-          {productos.map((producto) => (
+          {misProductos.map((producto) => (
             <tr key={producto.id}>
               <td>{producto.nombre}</td>
               <td>{producto.descripcion}</td>
@@ -106,7 +117,7 @@ const MisProductos = () => {
               <td>{producto.precio}</td>
               <td>{producto.stock}</td>
               <td>
-                <img src={producto.imagen || "default.png"} alt={producto.nombre} width="50" />
+                <img src={producto.imagen || "default.png"} alt={producto.nombre} />
               </td>
               <td>
                 <button className="btn btn-outline-info me-4" onClick={() => editarProducto(producto.id)}>Editar</button>
@@ -172,7 +183,7 @@ const MisProductos = () => {
           onChange={handleFileChange}
           className="form-control mb-2"
         />
-        {imagenPreview && <img src={imagenPreview} alt="Preview" width="100" />}
+        {imagenPreview && <img src={imagenPreview} alt="Preview" width="50" />}
         <button className="btn btn-warning mt-2" onClick={agregarProducto}>
           {nuevoProducto.id ? "Actualizar Producto" : "Agregar Producto"}
         </button>
@@ -182,4 +193,3 @@ const MisProductos = () => {
 };
 
 export default MisProductos;
-

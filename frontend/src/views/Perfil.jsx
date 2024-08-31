@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import "../styles/perfil.css";
 import usuariosData from "../data/usuarios.json";
 import perfilImg from "../assets/perfil.png"; 
 

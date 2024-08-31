@@ -1,7 +1,18 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import '../styles/registrarse_iniciar_sesion.css'
+import users from "../data/usuarios.json"
+
+const getExistingUserIds = (users) => users.map(user => user.id);
+
+const generateUniqueId = (existingIds) => {
+  let id;
+  do {
+    id = Math.floor(Math.random() * 100) + 1;
+  } while (existingIds.includes(id));
+  return id;
+};
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 const initialForm = {
@@ -17,6 +28,12 @@ const Registrarse = () => {
   const {registerUser} = useAuth()
   const navigate = useNavigate()
   const [user, setUser] = useState(initialForm)
+  const [existingUserIds, setExistingUserIds] = useState([]);
+
+  useEffect(() => {
+    const ids = getExistingUserIds(users);
+    setExistingUserIds(ids);
+  }, []);
 
   const handleChange = (event) => setUser({ ...user, [event.target.name]: event.target.value })
 
@@ -40,7 +57,11 @@ const Registrarse = () => {
       return window.alert('El formato del email no es correcto!')
     }
 
-    const { success, message } = registerUser(user);
+    const newUserId = generateUniqueId(existingUserIds);
+
+    const userWithId = { ...user, id: newUserId }
+
+    const { success, message } = registerUser(userWithId);
     window.alert(message);
 
     if (success) {

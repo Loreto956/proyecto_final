@@ -18,15 +18,11 @@ import MisProductos from './views/MisProductos'
 import Carrito from './views/Carrito'  // Importa el nuevo componente Carrito
 
 function App() {
-  const globalState = useAuth()
-
   return (
     <>
       <AuthProvider>
       <ShopProvider>
       <CartProvider>  {/* Añade CartProvider */}
-        <Context.Provider value={globalState}>
-      <div className='app-container'>
         <Navbar/>
           <main style={{backgroundColor: '#faf4d3'}}>
             <Routes>
@@ -42,8 +38,7 @@ function App() {
             </Routes>
           </main>
           <Footer/>
-        </div>
-        </Context.Provider>
+        
       </CartProvider>
       </ShopProvider>
       </AuthProvider>

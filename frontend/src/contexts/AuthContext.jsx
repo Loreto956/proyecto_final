@@ -1,10 +1,11 @@
 import React, { createContext, useState, useContext } from 'react';
+import usuarios from '../data/usuarios.json'
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 
-  const [users, setUsers] = useState([]); 
+  const [users, setUsers] = useState(usuarios); 
   const [currentUser, setCurrentUser] = useState(null);
 
   const registerUser = (user) => {
@@ -31,7 +32,7 @@ export const AuthProvider = ({ children }) => {
   const logoutUser = () => setCurrentUser(null);
 
   return (
-    <AuthContext.Provider value={{ registerUser, loginUser, currentUser, logoutUser }}>
+    <AuthContext.Provider value={{ registerUser, loginUser, currentUser, logoutUser, users, setUsers }}>
       {children}
     </AuthContext.Provider>
   );
