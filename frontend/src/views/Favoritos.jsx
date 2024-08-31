@@ -10,6 +10,10 @@ const ProductosFavoritos = () => {
 
     const likedProductsList = products.filter(product => likedProducts.includes(product.id))
 
+    const formatPrice = (price) => {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      };
+
     return (
       <div className="container mt-4">
       <h2>Mis productos favoritos</h2>
@@ -24,7 +28,7 @@ const ProductosFavoritos = () => {
             />
             <div className="card-body">
               <h5 className="card-title">{producto.nombre}</h5>
-              <p className="card-text">${new Intl.NumberFormat('es-Es').format(producto.precio)}</p>
+              <p className="card-text">${formatPrice(producto.precio)}</p>
               
               <div className="d-flex justify-content-between ">
               <button 
