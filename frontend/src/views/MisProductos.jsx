@@ -183,7 +183,7 @@ const MisProductos = () => {
           onChange={handleFileChange}
           className="form-control mb-2"
         />
-        {imagenPreview && <img src={imagenPreview} alt="Preview" width="50" />}
+        {imagenPreview && <img src={imagenPreview} alt="Preview" width="50" className="img-style" />}
         <button className="btn btn-warning mt-2" onClick={agregarProducto}>
           {nuevoProducto.id ? "Actualizar Producto" : "Agregar Producto"}
         </button>
