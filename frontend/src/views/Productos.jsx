@@ -11,6 +11,12 @@ const Productos = () => {
   const navigate = useNavigate();
   const { products, loading, hasError, showError, likedProducts, handleLike } = useContext(ProductsContext);
 
+  useEffect(() => {
+    if (!loading && products.length > 0) {
+      console.log("Productos cargados:", products);
+    }
+  }, [loading, products]);
+
   const formatPrice = (price) => {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
@@ -24,6 +30,7 @@ const Productos = () => {
   return (
     <div className="container mt-4">
       {hasError && showError && <div className="alert alert-danger">Error al cargar productos desde el servidor, mostrando datos locales</div>}
+      {!loading && products.length > 0 && <div className="alert alert-success">Productos cargados correctamente</div>}
       <div className="row">
         {products.map((producto) => (
           <div key={producto.id} className="col-md-4 mb-4">
