@@ -116,8 +116,8 @@ const MisProductos = () => {
               <td>{producto.categoria}</td>
               <td>{producto.precio}</td>
               <td>{producto.stock}</td>
-              <td>
-                <img src={producto.imagen || "default.png"} alt={producto.nombre} />
+              <td className="td-style">
+                <img src={producto.imagen || "default.png"} alt={producto.nombre} className="img-style" />
               </td>
               <td>
                 <button className="btn btn-outline-info me-4" onClick={() => editarProducto(producto.id)}>Editar</button>
@@ -183,7 +183,7 @@ const MisProductos = () => {
           onChange={handleFileChange}
           className="form-control mb-2"
         />
-        {imagenPreview && <img src={imagenPreview} alt="Preview" width="50" />}
+        {imagenPreview && <img src={imagenPreview} alt="Preview" width="50" className="img-style" />}
         <button className="btn btn-warning mt-2" onClick={agregarProducto}>
           {nuevoProducto.id ? "Actualizar Producto" : "Agregar Producto"}
         </button>
