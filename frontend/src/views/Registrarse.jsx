@@ -1,128 +1,157 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
-import '../styles/registrarse_iniciar_sesion.css'
-import users from "../data/usuarios.json"
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { ENDPOINT } from '../config/constants';
+import '../styles/registrarse_iniciar_sesion.css';
+import { useAuth } from "../contexts/AuthContext";
 
-const getExistingUserIds = (users) => users.map(user => user.id);
+const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
-const generateUniqueId = (existingIds) => {
-  let id;
-  do {
-    id = Math.floor(Math.random() * 100) + 1;
-  } while (existingIds.includes(id));
-  return id;
+const initialForm = {
+  nombre: '',
+  apellido: '',
+  email: '',
+  password: '',
+  confirmedPassword: '',
+  direccion: '',
+  telefono: ''
 };
 
-const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
-const initialForm = {
-    nombre: '',
-    apellido: '',
-    email: '',
-    password: '',
-    confirmedPassword: ''
-}
-
-
 const Registrarse = () => {
-  const {registerUser} = useAuth()
-  const navigate = useNavigate()
-  const [user, setUser] = useState(initialForm)
-  const [existingUserIds, setExistingUserIds] = useState([]);
+  const navigate = useNavigate();
+  const { registerUser } = useAuth();
+  const [user, setUser] = useState(initialForm);
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    const ids = getExistingUserIds(users);
-    setExistingUserIds(ids);
-  }, []);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setUser({ ...user, [name]: value });
+  };
 
-  const handleChange = (event) => setUser({ ...user, [event.target.name]: event.target.value })
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
-
+    // Validaciones
     if (
-        !user.nombre.trim() ||
-        !user.apellido.trim() ||
-        !user.email.trim() ||
-        !user.password.trim()
+      !user.nombre.trim() ||
+      !user.apellido.trim() ||
+      !user.email.trim() ||
+      !user.password.trim()
     ) {
-      return window.alert('Todos los campos son obligatorias.')
+      setError('Todos los campos son obligatorios.');
+      return;
     }
 
-    if(user.password !== user.confirmedPassword){
-        return window.alert('Las contraseñas no coinciden')
+    if (user.password !== user.confirmedPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
     }
 
     if (!emailRegex.test(user.email)) {
-      return window.alert('El formato del email no es correcto!')
+      setError('El formato del email no es correcto!');
+      return;
     }
 
-    const newUserId = generateUniqueId(existingUserIds);
-
-    const userWithId = { ...user, id: newUserId }
-
-    const { success, message } = registerUser(userWithId);
-    window.alert(message);
-
-    if (success) {
-      navigate('/login');
+    try {
+      const { success, message } = await registerUser({
+        nombre: user.nombre,
+        apellido: user.apellido,
+        email: user.email,
+        password: user.password,
+        direccion: user.direccion,
+        telefono: user.telefono
+      });
+      
+      alert(message);
+      if (success) {
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Error al registrar usuario:', error);
+      setError('Error al registrar usuario. Por favor, inténtelo de nuevo.');
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h3>Registrar nuevo usuario</h3>
-      <div>
-        <input
-          value={user.nombre}
-          onChange={handleChange}
-          name='nombre'
-          className='form-input'
-          placeholder='Nombre'
-        />
-      </div>
-      <div>
-        <input
-          value={user.apellido}
-          onChange={handleChange}
-          name='apellido'
-          className='form-input'
-          placeholder='Apellido'
-        />
-      </div>
-      <div>
-        <input
-          value={user.email}
-          onChange={handleChange}
-          name='email'
-          className='form-input'
-          placeholder='Correo electrónico'
-        />
-      </div>
-      <div>
-        <input
-          value={user.password}
-          onChange={handleChange}
-          className='form-input'
-          name='password'
-          type='password'
-          placeholder='Contraseña'
-        />
-      </div>
-      <div>
-        <input
-          value={user.confirmedPassword}
-          onChange={handleChange}
-          className='form-input'
-          name='confirmedPassword'
-          type='password'
-          placeholder='Confirmar contraseña'
-        />
-      </div>
-      
-      <button className='form-button' type='submit'>Registrarme</button>
-    </form>
-  )
-}
+    <div className="register-container">
+      <form onSubmit={handleSubmit} className="register-form">
+        <h2>Registrar nuevo usuario</h2>
+        {error && <div className="error-message">{error}</div>}
+        <div className="form-group">
+          <input
+            type="text"
+            name="nombre"
+            value={user.nombre}
+            onChange={handleChange}
+            placeholder="Nombre"
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="text"
+            name="apellido"
+            value={user.apellido}
+            onChange={handleChange}
+            placeholder="Apellido"
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="email"
+            name="email"
+            value={user.email}
+            onChange={handleChange}
+            placeholder="Correo electrónico"
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="password"
+            name="password"
+            value={user.password}
+            onChange={handleChange}
+            placeholder="Contraseña"
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="password"
+            name="confirmedPassword"
+            value={user.confirmedPassword}
+            onChange={handleChange}
+            placeholder="Confirmar contraseña"
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="text"
+            name="direccion"
+            value={user.direccion}
+            onChange={handleChange}
+            placeholder="Dirección (opcional)"
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="tel"
+            name="telefono"
+            value={user.telefono}
+            onChange={handleChange}
+            placeholder="Teléfono (opcional)"
+            className="form-input"
+          />
+        </div>
+        <button type="submit" className="form-button">Registrarse</button>
+      </form>
+    </div>
+  );
+};
 
-export default Registrarse
+export default Registrarse;
