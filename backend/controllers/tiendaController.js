@@ -7,24 +7,6 @@ const home = (req, res) => {
     res.send('Home');
 };
 
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (!token) {
-        return res.status(403).json({ error: 'Token no proporcionado' });
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({ error: 'Token no válido' });
-        }
-
-        req.user = user; // Guardar la información del usuario decodificado en la solicitud
-        next(); // Continuar con la siguiente función en la ruta
-    });
-};
-
 const notFound = (req, res) => {
     res.status(404).send('Not Found');
 };
@@ -235,6 +217,5 @@ export const controller = {
     registerFavorite,
     getFavoriteByUser,
     eliminarFavoritosById,
-    authenticateToken,
     notFound
 }

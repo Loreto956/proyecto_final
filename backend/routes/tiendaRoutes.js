@@ -12,43 +12,44 @@ router.post('/usuarios', controller.registerUser);
 // Rutas para iniciar sesión 
 router.post('/login', controller.loginUser);
 
-// Obtener productos en venta
-router.get('/productos', controller.getProducts);
-
-// Entrega detalles de un producto
-router.get('/producto/:producto_id', controller.getDetallesProductById);
-
-// Entrega el Nombre y Apellido de un usuario segun el ID
-router.get('/usuario/:usuario_id', controller.getUserName);
 
 
 
 // Rutas protegidas
 
+// Obtener productos en venta
+router.get('/productos', middleware.authenticateToken, controller.getProducts);
+
+// Entrega detalles de un producto
+router.get('/producto/:producto_id', middleware.authenticateToken, controller.getDetallesProductById);
+
+// Entrega el Nombre y Apellido de un usuario segun el ID
+router.get('/usuario/:usuario_id', middleware.authenticateToken, controller.getUserName);
+
 // Entrega los datos del usuario logeado 
-router.get('/usuarios', controller.authenticateToken, controller.getUser);
+router.get('/usuarios', middleware.authenticateToken, controller.getUser);
 
 // Registra un nuevo producto
-router.post('/productos', controller.authenticateToken, controller.registerProduct);
+router.post('/productos', middleware.authenticateToken, controller.registerProduct);
 
 // Elimina un producto del usuario logeado
-router.delete('/productos/:producto_id', controller.authenticateToken, controller.eliminarProducto);
+router.delete('/productos/:producto_id', middleware.authenticateToken, controller.eliminarProducto);
 
 // Actualiza un producto del usuario logeado
-router.put('/productos/:producto_id', controller.authenticateToken, controller.actualizarProducto);
+router.put('/productos/:producto_id', middleware.authenticateToken, controller.actualizarProducto);
 
 
 // Agrega un producto a favoritos del usuario logeado
-router.post('/favoritos', controller.authenticateToken, controller.registerFavorite); 
+router.post('/favoritos', middleware.authenticateToken, controller.registerFavorite); 
 
 // Entrega los productos del usuario logeado
-router.get('/productos/:usuario_id', controller.authenticateToken, controller.getProductByUser); 
+router.get('/productos/:usuario_id', middleware.authenticateToken, controller.getProductByUser); 
 
 // Entrega los favoritos del usuario logeado
-router.get('/favoritos', controller.authenticateToken, controller.getFavoriteByUser); 
+router.get('/favoritos', middleware.authenticateToken, controller.getFavoriteByUser); 
 
 // Elimina un favorito del usuario logeado
-router.delete('/favoritos/:product_id', controller.authenticateToken, controller.eliminarFavoritosById); 
+router.delete('/favoritos/:product_id', middleware.authenticateToken, controller.eliminarFavoritosById); 
 
 // Manejo de rutas no encontradas
 router.get('*', controller.notFound);
