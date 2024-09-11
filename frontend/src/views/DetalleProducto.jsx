@@ -4,8 +4,10 @@ import axios from 'axios';
 import { CartContext } from '../contexts/CartContext';
 import { ProductsContext } from '../contexts/FavsContext';
 import { ENDPOINT } from "../config/constants"; 
+import { useAuth } from '../contexts/AuthContext';
 
 const DetalleProducto = () => {
+  const { currentUser } = useAuth()
   const { id } = useParams(); 
   const { likedProducts, handleLike } = useContext(ProductsContext);
   const [producto, setProducto] = useState(null);
@@ -18,9 +20,10 @@ const DetalleProducto = () => {
   useEffect(() => {
     const cargarProducto = async () => {
       try {
-        const respuesta = await axios.get(`${ENDPOINT.producto}/${id}`);
-        setProducto(respuesta.data);
- 
+        const token = currentUser?.token;
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const respuesta = await axios.get(`${ENDPOINT.producto}/${id}`, {headers});
+        setProducto(respuesta.data); 
       } catch (error) {
         console.error('Error al cargar el producto:', error);
         setError('No se pudo cargar el producto');
@@ -28,7 +31,7 @@ const DetalleProducto = () => {
     };
 
     cargarProducto();
-  }, [id]);
+  }, [id, currentUser?.token]);
 
   const handleIncrementarCantidad = () => {
     if (cantidad < producto.stock) {

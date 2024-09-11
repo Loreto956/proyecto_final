@@ -1,14 +1,14 @@
 import React, {  createContext, useState, useEffect } from 'react'
 import axios from 'axios';
-import productosData from '../data/productos.json'
 import { ENDPOINT } from '../config/constants';
 import { useAuth } from './AuthContext';
+import Cookies from 'js-cookie';
 
 export const ProductsContext = createContext();
 
 const ShopProvider = ({ children }) => {
     const { currentUser } = useAuth();
-    const [products, setProducts] = useState([productosData]);
+    const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
     const [showError, setShowError] = useState(true);
@@ -17,11 +17,15 @@ const ShopProvider = ({ children }) => {
     useEffect(() => {
         const fetchProductos = async () => {
           try {
-            const response = await axios.get(ENDPOINT.productos);
+            const token = Cookies.get('token');
+            const response = await axios.get(ENDPOINT.productos, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
             setProducts(response.data);
           } catch (error) {
-            console.error("Error al cargar productos desde la API, cargando datos locales", error);
-            setProducts(productosData);
+            console.error("Error al cargar productos desde la API", error);
             setHasError(true);
             setTimeout(() => {
               setShowError(false);

@@ -13,18 +13,18 @@ router.post('/usuarios', controller.registerUser);
 router.post('/login', controller.loginUser);
 
 
-
-
 // Rutas protegidas
 
 // Obtener productos en venta
-router.get('/productos', middleware.authenticateToken, controller.getProducts);
+router.get('/productos', middleware.authenticateToken, controller.getProducts); 
 
 // Entrega detalles de un producto
-router.get('/producto/:producto_id', middleware.authenticateToken, controller.getDetallesProductById);
+router.get('/producto/:producto_id', middleware.authenticateToken, controller.getDetallesProductById); 
+
 
 // Entrega el Nombre y Apellido de un usuario segun el ID
-router.get('/usuario/:usuario_id', middleware.authenticateToken, controller.getUserName);
+router.get('/usuario/:usuario_id', middleware.authenticateToken, controller.getUserName);  
+
 
 // Entrega los datos del usuario logeado 
 router.get('/usuarios', middleware.authenticateToken, controller.getUser);

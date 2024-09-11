@@ -18,17 +18,30 @@ const Perfil = () => {
   });
 
 
-useEffect(() => {
-    if (currentUser) {
-      setUserData(currentUser);
-    } else {
-      const usuarioLocal = usuariosData.find(user => user.email === "juan.perez@example.com");
-      if (usuarioLocal) {
-        setUserData(usuarioLocal);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (currentUser) {
+        // Verifica si currentUser tiene el token
+        const token = currentUser.token;
+        if (!token) {
+          // Si no hay token, redirige al login
+          navigate("/login");
+          return;
+        }
+        try {
+          
+          setUserData(currentUser);
+        } catch (error) {
+          console.error('Error al validar el token:', error);
+          navigate("/login");
+        }
       } else {
+        // Si currentUser es null, redirige al login
         navigate("/login");
       }
-    }
+    };
+
+    fetchUserData();
   }, [currentUser, navigate]);
 
 

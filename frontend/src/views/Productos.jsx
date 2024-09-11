@@ -1,8 +1,5 @@
 import { CartContext } from "../contexts/CartContext";
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import { ENDPOINT } from "../config/constants"; // URL de la Api
-import productosData from "../data/productos.json"; // Importar JSON local
 import { useNavigate } from "react-router-dom"; // Para la navegación a detalles
 import { ProductsContext } from "../contexts/FavsContext"
 
@@ -10,10 +7,17 @@ const Productos = () => {
   const { addToCart } = useContext(CartContext);
   const navigate = useNavigate();
   const { products, loading, hasError, showError, likedProducts, handleLike } = useContext(ProductsContext);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
   useEffect(() => {
     if (!loading && products.length > 0) {
-      console.log("Productos cargados:", products);
+      setShowSuccessAlert(true);
+
+      const timer = setTimeout(() => {
+        setShowSuccessAlert(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
     }
   }, [loading, products]);
 
@@ -30,7 +34,7 @@ const Productos = () => {
   return (
     <div className="container mt-4">
       {hasError && showError && <div className="alert alert-danger">Error al cargar productos desde el servidor, mostrando datos locales</div>}
-      {!loading && products.length > 0 && <div className="alert alert-success">Productos cargados correctamente</div>}
+      {showSuccessAlert && !loading && products.length > 0 && <div className="alert alert-success">Productos cargados correctamente</div>}
       <div className="row">
         {products.map((producto) => (
           <div key={producto.id} className="col-md-4 mb-4">

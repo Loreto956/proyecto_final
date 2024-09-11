@@ -23,10 +23,11 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.get(ENDPOINT.users, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setCurrentUser(response.data);
+      setCurrentUser({...response.data, token});
     } catch (error) {
       console.error('Error fetching user data:', error);
-      Cookies.remove('token');
+      Cookies.remove('token')
+      setCurrentUser(null);;
     } finally {
       setLoading(false);
     }
@@ -34,7 +35,8 @@ export const AuthProvider = ({ children }) => {
 
   const registerUser = async (userData) => {
     try {
-      const response = await axios.post(ENDPOINT.users, userData);
+      
+      await axios.post(ENDPOINT.users, userData);
       return { success: true, message: 'Usuario registrado con éxito.' };
     } catch (error) {
       console.error('Error al registrar usuario:', error);
