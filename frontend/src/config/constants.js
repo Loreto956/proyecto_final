@@ -6,4 +6,7 @@ export const ENDPOINT = {
   productos: `${URLBASE}/productos`,
   producto: `${URLBASE}/producto`,
   usuario: `${URLBASE}/usuario`,
+  favoritos: `${URLBASE}/favoritos`,
+  eliminarFavorito: `${URLBASE}/favoritos`,
+  registerFavorite: `${URLBASE}/favoritos`
 }
