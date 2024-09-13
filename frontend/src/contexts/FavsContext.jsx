@@ -16,51 +16,44 @@ const ShopProvider = ({ children }) => {
 
     useEffect(() => {
       if (currentUser) {
-        const fetchProductos = async () => {
-          try {
-            const token = Cookies.get('token');
-            const response = await axios.get(ENDPOINT.productos, {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            });
-            setProducts(response.data);
-          } catch (error) {
-            console.error("Error al cargar productos desde la API", error);
-            setHasError(true);
-            setTimeout(() => {
-              setShowError(false);
-            }, 3000);
-          } finally {
-            setLoading(false);
-          }
-        };
-
-        const fetchFavoritos = async () => {
-          try {
-            const token = Cookies.get('token')
-            const response = await axios.get(ENDPOINT.favoritos, {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            })
-            setLikedProducts(response.data.map(fav => fav.producto_id))
-          } catch (error) {
-            console.error("Error al cargar favoritos", error)
-          }
-        }
-        fetchProductos();
         fetchFavoritos();
       }
     }, [currentUser]);
 
-    // const handleLike = (productId) => {
-    //     setLikedProducts(prevLikedProducts =>
-    //       prevLikedProducts.includes(productId)
-    //         ? prevLikedProducts.filter(id => id !== productId)
-    //         : [...prevLikedProducts, productId]
-    //     );
-    // };
+    const fetchProductos = async () => {
+      try {
+        setLoading(true);
+        const token = Cookies.get('token');
+        const response = await axios.get(ENDPOINT.productos, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Error al cargar productos desde la API", error);
+        setHasError(true);
+        setTimeout(() => {
+          setShowError(false);
+        }, 3000);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchFavoritos = async () => {
+      try {
+        const token = Cookies.get('token')
+        const response = await axios.get(ENDPOINT.favoritos, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        setLikedProducts(response.data.map(fav => fav.producto_id))
+      } catch (error) {
+        console.error("Error al cargar favoritos", error)
+      }
+    }
 
     const handleLike = async (productId) => {
       const isLiked = likedProducts.includes(productId);
@@ -88,7 +81,6 @@ const ShopProvider = ({ children }) => {
           console.error("Error al actualizar favoritos:", error);
       }
   };
-
 
     return (
         <ProductsContext.Provider value={{
