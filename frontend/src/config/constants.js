@@ -12,10 +12,14 @@ export const URLBASE = `http://${getHostIP()}:3000` // ruta del backend usando s
 export const ENDPOINT = {
   login: `${URLBASE}/login`,
   users: `${URLBASE}/usuarios`,
-  productos: `${URLBASE}/productos`,
+  uproductos: `${URLBASE}/user-productos`,
+  productos: `${URLBASE}/all-productos`,
   producto: `${URLBASE}/producto`,
   usuario: `${URLBASE}/usuario`,
   favoritos: `${URLBASE}/favoritos`,
   eliminarFavorito: `${URLBASE}/favoritos`,
-  registerFavorite: `${URLBASE}/favoritos`
+  registerFavorite: `${URLBASE}/favoritos`,
+  registrarProducto: `${URLBASE}/productos`,
+  eliminarProducto: `${URLBASE}/productos`,
+  actualizarProducto: `${URLBASE}/productos`,
 }
