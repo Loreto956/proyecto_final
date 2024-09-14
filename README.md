@@ -3,7 +3,7 @@
 ## Descripción
 PetShop E-commerce es una aplicación web fullstack para una tienda en línea de productos para mascotas. Permite a los usuarios ver productos, agregarlos al carrito, gestionar sus propios productos y realizar compras.
 
-![alt text](<Screenshot 2024-09-14 at 02.02.03.png>)
+![alt text](peluditos.png)
 
 ## Características principales
 - Catálogo de productos para perros y gatos
