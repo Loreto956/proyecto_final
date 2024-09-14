@@ -1,5 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import React, { useState, useContext, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 import { ProductsContext } from "../contexts/FavsContext";
 import axios from 'axios';
 import '../styles/misProductos.css';
@@ -8,12 +10,14 @@ import Cookies from 'js-cookie';
 
 const MisProductos = () => {
   const { currentUser } = useAuth();
-  const { products, setProducts } = useContext(ProductsContext);
+  const [misProductos, setMisProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [nuevoProducto, setNuevoProducto] = useState({
     id: null,
     nombre: "",
     descripcion: "",
     marca: "",
+    categoria: "Perro",
     categoria: "Perro",
     precio: "",
     stock: "",

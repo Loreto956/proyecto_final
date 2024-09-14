@@ -32,7 +32,7 @@ router.get('/usuarios', middleware.authenticateToken, controller.getUser); //per
 router.post('/productos', middleware.authenticateToken, controller.registerProduct);
 
 // Elimina un producto del usuario logeado
-router.delete('/productos/:producto_id', middleware.authenticateToken, controller.eliminarProducto);
+router.delete('/user-productos/:producto_id', middleware.authenticateToken, controller.eliminarProducto);
 
 // Actualiza un producto del usuario logeado
 router.put('/productos/:producto_id', middleware.authenticateToken, controller.actualizarProducto);
@@ -42,7 +42,7 @@ router.put('/productos/:producto_id', middleware.authenticateToken, controller.a
 router.post('/favoritos', middleware.authenticateToken, controller.registerFavorite); 
 
 // Entrega los productos del usuario logeado
-router.get('/productos/:usuario_id', middleware.authenticateToken, controller.getProductByUser); 
+router.get('/user-productos', middleware.authenticateToken, controller.getProductByUser); 
 
 // Entrega los favoritos del usuario logeado
 router.get('/favoritos', middleware.authenticateToken, controller.getFavoriteByUser); 

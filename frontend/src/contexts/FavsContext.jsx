@@ -18,7 +18,6 @@ const ShopProvider = ({ children }) => {
         const fetchProductos = async () => {
           try {
             const token = Cookies.get('token');
-           
             const response = await axios.get(ENDPOINT.productos, {
               headers: {
                 Authorization: `Bearer ${token}`
