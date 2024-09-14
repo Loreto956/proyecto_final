@@ -66,13 +66,13 @@ const Carrito = () => {
                           +
                         </button>
                       </p>
+                      <p className="card-text">Subtotal: ${formatPrice(item.precio * item.quantity)}</p>
                       <button
                         onClick={() => removeFromCart(item.id)}
                         className="btn btn-danger"
                       >
                         Eliminar
                       </button>
-                    
                     </div>
                   </div>
                 </div>

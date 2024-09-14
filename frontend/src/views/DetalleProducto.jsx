@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { CartContext } from '../contexts/CartContext';
 import { ProductsContext } from '../contexts/FavsContext';
-import { ENDPOINT } from "../config/constants"; 
+import { ENDPOINT, URLBASE } from "../config/constants"; 
 import { useAuth } from '../contexts/AuthContext';
 
 const DetalleProducto = () => {
@@ -16,6 +16,7 @@ const DetalleProducto = () => {
   const { addToCart } = useContext(CartContext);
   const [vendedor, setVendedor] = useState(null);
   const [errorVendedor, setErrorVendedor] = useState("");
+  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
     const cargarProducto = async () => {
@@ -51,6 +52,8 @@ const DetalleProducto = () => {
 
   const handleAddToCart = () => {
     addToCart({ ...producto, quantity: cantidad });
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000); // La confirmación desaparecerá después de 2 segundos
   };
 
   const formatPrice = (price) => {
@@ -66,7 +69,7 @@ const DetalleProducto = () => {
       <div className="row">
         <div className="col-md-6 d-flex flex-column align-items-center">
           <img
-            src={producto.imagen}
+            src={`${URLBASE}${producto.imagen}`}
             alt={producto.nombre}
             className="img-fluid mb-4"
             style={{ maxHeight: "400px" }}
@@ -107,6 +110,7 @@ const DetalleProducto = () => {
               +
             </button>
             <button className="btn btn-warning m-3" onClick={handleAddToCart}>Agregar al Carrito</button>
+            {addedToCart && <span className="text-success ms-2">¡Producto añadido al carrito!</span>}
           </div>
           <p>Stock disponible: {producto.stock}</p>
           {error && <div className="alert alert-danger mt-3">{error}</div>}

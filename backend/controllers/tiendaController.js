@@ -89,14 +89,16 @@ const getUserName = async (req, res) => {
 
 
 const registerProduct = async (req, res) => {
-    const { nombre, marca, descripcion, precio, imagen, categoria, stock} = req.body;
-    const usuario_id = req.user.id;
-    try {
+  const { nombre, marca, descripcion, precio, categoria, stock } = req.body;
+  const imagen = req.file ? `/uploads/${req.file.filename}` : null;
+  const usuario_id = req.user.id;
+  try {
     const newProduct = await model.createProduct(nombre, marca, descripcion, precio, imagen, categoria, stock, usuario_id);
     res.status(201).json(newProduct);
-    } catch (error) {
-    res.status(500).json({ error: 'Error al crear producto' });
-    }
+  } catch (error) {
+    console.error('Error al crear producto:', error);
+    res.status(500).json({ error: 'Error al crear producto', details: error.message });
+  }
 };
 
 const eliminarProducto = async (req, res) => {
@@ -117,21 +119,24 @@ const eliminarProducto = async (req, res) => {
 };
 
 const actualizarProducto = async (req, res) => {
-    const producto_id = req.params.producto_id;
-    const usuario_id = req.user.id;
-    const datosActualizados = req.body;
+  const producto_id = req.params.producto_id;
+  const usuario_id = req.user.id;
+  const datosActualizados = req.body;
+  if (req.file) {
+    datosActualizados.imagen = `/uploads/${req.file.filename}`;
+  }
 
-    try {
-        const resultado = await model.actualizarProducto(producto_id, usuario_id, datosActualizados);
-        if (resultado.success) {
-            res.json(resultado);
-        } else {
-            res.status(404).json(resultado);
-        }
-    } catch (error) {
-        console.error('Error al actualizar producto:', error);
-        res.status(500).json({ error: 'Error al actualizar producto' });
+  try {
+    const resultado = await model.actualizarProducto(producto_id, usuario_id, datosActualizados);
+    if (resultado.success) {
+      res.json(resultado);
+    } else {
+      res.status(404).json(resultado);
     }
+  } catch (error) {
+    console.error('Error al actualizar producto:', error);
+    res.status(500).json({ error: 'Error al actualizar producto' });
+  }
 };
 
 

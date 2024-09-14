@@ -29,7 +29,7 @@ const InicioSesion = () => {
         alert(message);
 
         if (success) {
-          navigate('/perfil');
+          navigate('/productos');
         }
     }
 
