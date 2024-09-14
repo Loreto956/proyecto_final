@@ -1,15 +1,16 @@
-import React, { useState, useContext, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import React, { useState, useContext, useEffect } from "react";
 import { ProductsContext } from "../contexts/FavsContext";
-import '../styles/misProductos.css';
 import axios from 'axios';
+import '../styles/misProductos.css';
 import { ENDPOINT } from "../config/constants";
+import Cookies from 'js-cookie';
 
 const MisProductos = () => {
   const { currentUser } = useAuth();
-  const [misProductos, setMisProductos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { products, setProducts } = useContext(ProductsContext);
   const [nuevoProducto, setNuevoProducto] = useState({
+    id: null,
     nombre: "",
     descripcion: "",
     marca: "",
@@ -17,76 +18,88 @@ const MisProductos = () => {
     precio: "",
     stock: "",
     imagen: "",
+    user_id: currentUser?.id || 1,
   });
   const [imagenPreview, setImagenPreview] = useState("");
+  const [misProductos, setMisProductos] = useState([]);
 
   useEffect(() => {
-    fetchMisProductos();
-  }, [currentUser]);
-
-  const fetchMisProductos = async () => {
-    try {
-      setLoading(true);
-      if (!ENDPOINT.uproductos) {
-        throw new Error('URL del endpoint no definida');
+    const fetchProducts = async () => {
+      if (currentUser?.id) {
+        try {
+          const token = Cookies.get('token');
+          const headers = {
+            'Authorization': `Bearer ${token}`,
+          };
+          const response = await axios.get(`${ENDPOINT.uproductos}`, { headers });
+          const productos = response.data;
+          console.log(productos);
+          setMisProductos(productos);
+        } catch (error) {
+          console.error("Error al obtener productos:", error);
+          setMisProductos([]);
+        }
       }
-      const response = await axios.get(ENDPOINT.uproductos, {
-        headers: { Authorization: `Bearer ${currentUser.token}` }
-      });
-      setMisProductos(response.data);
-    } catch (error) {
-      console.error("Error al obtener los productos:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchProducts();
+  }, [currentUser, setProducts]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "precio" || name === "stock") {
-      if (!isNaN(value) && Number(value) >= 0) {
-        setNuevoProducto({ ...nuevoProducto, [name]: value });
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue) && numericValue >= 0) {
+        setNuevoProducto(prevState => ({
+          ...prevState,
+          [name]: numericValue,
+        }));
       }
     } else {
-      setNuevoProducto({ ...nuevoProducto, [name]: value });
+      setNuevoProducto(prevState => ({
+        ...prevState,
+        [name]: value,
+      }));
     }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setNuevoProducto({
-      ...nuevoProducto,
-      imagen: file,
-    });
-    setImagenPreview(URL.createObjectURL(file));
+    if (file) {
+      setNuevoProducto(prevState => ({
+        ...prevState,
+        imagen: URL.createObjectURL(file),
+      }));
+      setImagenPreview(URL.createObjectURL(file));
+    }
   };
 
   const agregarProducto = async () => {
     try {
-      const formData = new FormData();
-      for (const key in nuevoProducto) {
-        formData.append(key, nuevoProducto[key]);
-      }
+      const token = Cookies.get('token');
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      };
+
+      const productoParaEnviar = {
+        ...nuevoProducto,
+        precio: parseFloat(nuevoProducto.precio),
+        stock: parseInt(nuevoProducto.stock, 10),
+      };
 
       if (nuevoProducto.id) {
-        const response = await axios.put(`${ENDPOINT.actualizarProducto}/${nuevoProducto.id}`, formData, {
-          headers: { 
-            Authorization: `Bearer ${currentUser.token}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        setMisProductos(misProductos.map(p => p.id === nuevoProducto.id ? response.data.producto : p));
+        await axios.put(`${ENDPOINT.actualizarProducto}/${nuevoProducto.id}`, productoParaEnviar, { headers });
+        setProducts(prevProducts => prevProducts.map(producto =>
+          producto.id === nuevoProducto.id ? productoParaEnviar : producto
+        ));
       } else {
-        const response = await axios.post(ENDPOINT.registrarProducto, formData, {
-          headers: { 
-            Authorization: `Bearer ${currentUser.token}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        setMisProductos([...misProductos, response.data]);
+        const { data } = await axios.post(ENDPOINT.registrarProducto, productoParaEnviar, { headers });
+        setProducts(prevProducts => [...prevProducts, data]);
       }
 
       setNuevoProducto({
+        id: null,
         nombre: "",
         descripcion: "",
         marca: "",
@@ -94,28 +107,33 @@ const MisProductos = () => {
         precio: "",
         stock: "",
         imagen: "",
+        user_id: currentUser?.id,
       });
       setImagenPreview("");
     } catch (error) {
-      console.error("Error al agregar/actualizar producto:", error);
+      console.error("Error al agregar o actualizar el producto:", error);
     }
   };
 
   const eliminarProducto = async (id) => {
     try {
-      await axios.delete(`${ENDPOINT.uproductos}/${id}`, {
-        headers: { Authorization: `Bearer ${currentUser.token}` }
-      });
-      setMisProductos(misProductos.filter(producto => producto.id !== id));
+      const token = Cookies.get('token');
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+      };
+      await axios.delete(`${ENDPOINT.eliminarProducto}/${id}`, { headers });
+      setProducts(prevProducts => prevProducts.filter(producto => producto.id !== id));
     } catch (error) {
-      console.error("Error al eliminar producto:", error);
-      // Aquí puedes añadir una notificación al usuario si lo deseas
+      console.error("Error al eliminar el producto:", error);
     }
   };
 
-  const editarProducto = (producto) => {
-    setNuevoProducto(producto);
-    setImagenPreview(producto.imagen);
+  const editarProducto = (id) => {
+    const productoAEditar = misProductos.find(producto => producto.id === id);
+    if (productoAEditar) {
+      setNuevoProducto(productoAEditar);
+      setImagenPreview(productoAEditar.imagen);
+    }
   };
 
   return (
@@ -135,23 +153,29 @@ const MisProductos = () => {
           </tr>
         </thead>
         <tbody>
-          {misProductos.map((producto) => (
-            <tr key={producto.id}>
-              <td>{producto.nombre}</td>
-              <td>{producto.descripcion}</td>
-              <td>{producto.marca}</td>
-              <td>{producto.categoria}</td>
-              <td>{producto.precio}</td>
-              <td>{producto.stock}</td>
-              <td className="td-style">
-                <img src={producto.imagen || "default.png"} alt={producto.nombre} className="img-style" />
-              </td>
-              <td>
-                <button className="btn btn-outline-info me-4" onClick={() => editarProducto(producto)}>Editar</button>
-                <button className="btn btn-outline-danger" onClick={() => eliminarProducto(producto.id)}>Eliminar</button>
-              </td>
+          {misProductos.length > 0 ? (
+            misProductos.map((producto) => (
+              <tr key={producto.id}>
+                <td>{producto.nombre}</td>
+                <td>{producto.descripcion}</td>
+                <td>{producto.marca}</td>
+                <td>{producto.categoria}</td>
+                <td>{producto.precio}</td>
+                <td>{producto.stock}</td>
+                <td className="td-style">
+                  <img src={producto.imagen || "default.png"} alt={producto.nombre} className="img-style" />
+                </td>
+                <td>
+                  <button className="btn btn-outline-info me-4" onClick={() => editarProducto(producto.id)}>Editar</button>
+                  <button className="btn btn-outline-danger" onClick={() => eliminarProducto(producto.id)}>Eliminar</button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="8" className="text-center">No hay productos para mostrar</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 

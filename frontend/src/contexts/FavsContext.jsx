@@ -17,6 +17,7 @@ const ShopProvider = ({ children }) => {
     useEffect(() => {
       if (currentUser) {
         fetchFavoritos();
+        fetchProductos()
       }
     }, [currentUser]);
 
@@ -90,6 +91,7 @@ const ShopProvider = ({ children }) => {
             hasError, 
             showError, 
             likedProducts, 
+            fetchProductos,
             handleLike}}>
             {children}
         </ProductsContext.Provider>
