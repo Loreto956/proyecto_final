@@ -1,7 +1,5 @@
-import React, { useState, useContext, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import React, { useState, useContext, useEffect } from "react";
-import { useAuth } from "../contexts/AuthContext";
 import { ProductsContext } from "../contexts/FavsContext";
 import axios from 'axios';
 import '../styles/misProductos.css';
@@ -10,14 +8,12 @@ import Cookies from 'js-cookie';
 
 const MisProductos = () => {
   const { currentUser } = useAuth();
-  const [misProductos, setMisProductos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { products, setProducts } = useContext(ProductsContext);
   const [nuevoProducto, setNuevoProducto] = useState({
     id: null,
     nombre: "",
     descripcion: "",
     marca: "",
-    categoria: "Perro",
     categoria: "Perro",
     precio: "",
     stock: "",
@@ -35,8 +31,9 @@ const MisProductos = () => {
           const headers = {
             'Authorization': `Bearer ${token}`,
           };
-          const response = await axios.get(`${ENDPOINT.productos}/${currentUser.id}`, { headers });
+          const response = await axios.get(`${ENDPOINT.uproductos}`, { headers });
           const productos = response.data;
+          console.log(productos);
           setMisProductos(productos);
         } catch (error) {
           console.error("Error al obtener productos:", error);
@@ -92,12 +89,12 @@ const MisProductos = () => {
       };
 
       if (nuevoProducto.id) {
-        await axios.put(`${ENDPOINT.productos}/${nuevoProducto.id}`, productoParaEnviar, { headers });
+        await axios.put(`${ENDPOINT.actualizarProducto}/${nuevoProducto.id}`, productoParaEnviar, { headers });
         setProducts(prevProducts => prevProducts.map(producto =>
           producto.id === nuevoProducto.id ? productoParaEnviar : producto
         ));
       } else {
-        const { data } = await axios.post(ENDPOINT.productos, productoParaEnviar, { headers });
+        const { data } = await axios.post(ENDPOINT.registrarProducto, productoParaEnviar, { headers });
         setProducts(prevProducts => [...prevProducts, data]);
       }
 
@@ -124,7 +121,7 @@ const MisProductos = () => {
       const headers = {
         'Authorization': `Bearer ${token}`,
       };
-      await axios.delete(`${ENDPOINT.productos}/${id}`, { headers });
+      await axios.delete(`${ENDPOINT.eliminarProducto}/${id}`, { headers });
       setProducts(prevProducts => prevProducts.filter(producto => producto.id !== id));
     } catch (error) {
       console.error("Error al eliminar el producto:", error);
@@ -132,7 +129,7 @@ const MisProductos = () => {
   };
 
   const editarProducto = (id) => {
-    const productoAEditar = products.find(producto => producto.id === id);
+    const productoAEditar = misProductos.find(producto => producto.id === id);
     if (productoAEditar) {
       setNuevoProducto(productoAEditar);
       setImagenPreview(productoAEditar.imagen);

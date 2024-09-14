@@ -20,6 +20,6 @@ export const ENDPOINT = {
   eliminarFavorito: `${URLBASE}/favoritos`,
   registerFavorite: `${URLBASE}/favoritos`,
   registrarProducto: `${URLBASE}/productos`,
-  eliminarProducto: `${URLBASE}/productos`,
+  eliminarProducto: `${URLBASE}/user-productos`,
   actualizarProducto: `${URLBASE}/productos`,
 }

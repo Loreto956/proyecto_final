@@ -16,7 +16,7 @@ router.post('/login', controller.loginUser);
 // Rutas protegidas
 
 // Obtener productos en venta
-router.get('/productos', middleware.authenticateToken, controller.getProducts);  //listo
+router.get('/all-productos', middleware.authenticateToken, controller.getProducts);  //listo
 
 // Entrega detalles de un producto
 router.get('/producto/:producto_id', middleware.authenticateToken, controller.getDetallesProductById);  //listo
