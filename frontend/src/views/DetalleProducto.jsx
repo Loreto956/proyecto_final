@@ -16,6 +16,7 @@ const DetalleProducto = () => {
   const { addToCart } = useContext(CartContext);
   const [vendedor, setVendedor] = useState(null);
   const [errorVendedor, setErrorVendedor] = useState("");
+  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
     const cargarProducto = async () => {
@@ -51,6 +52,8 @@ const DetalleProducto = () => {
 
   const handleAddToCart = () => {
     addToCart({ ...producto, quantity: cantidad });
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000); // La confirmación desaparecerá después de 2 segundos
   };
 
   const formatPrice = (price) => {
@@ -107,6 +110,7 @@ const DetalleProducto = () => {
               +
             </button>
             <button className="btn btn-warning m-3" onClick={handleAddToCart}>Agregar al Carrito</button>
+            {addedToCart && <span className="text-success ms-2">¡Producto añadido al carrito!</span>}
           </div>
           <p>Stock disponible: {producto.stock}</p>
           {error && <div className="alert alert-danger mt-3">{error}</div>}
