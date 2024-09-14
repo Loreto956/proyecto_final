@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom"; // Para la navegación a detalles
 import { ProductsContext } from "../contexts/FavsContext"
 import axios from 'axios';
-import { ENDPOINT } from "../config/constants";
+import { ENDPOINT, URLBASE } from "../config/constants";
 import Cookies from 'js-cookie';
 
 const Productos = () => {
@@ -64,8 +64,8 @@ const Productos = () => {
         {products.map((producto) => (
           <div key={producto.id} className="col-md-4 mb-4">
             <div className="card" style={{ width: '18rem' }}>
-              <img src={producto.imagen} className="card-img-top" alt={producto.nombre} />
-              <div className="card-body">
+            {<img src={`${URLBASE}${producto.imagen}`} alt={producto.nombre} className="card-img-top" />      }
+            <div className="card-body">
                 <h5 className="card-title">{producto.nombre}</h5>
                 <p>${formatPrice(producto.precio)}</p>
                 <button 

@@ -1,6 +1,19 @@
 import express from 'express';
 import { controller } from '../controllers/tiendaController.js';
 import { middleware } from '../middleware/tiendaMiddleware.js';
+import multer from 'multer';
+import path from 'path';
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname))
+  }
+});
+
+const upload = multer({ storage: storage });
 
 const router = express.Router();
 // Rutas publicas
@@ -29,13 +42,13 @@ router.get('/producto/:producto_id', middleware.authenticateToken, controller.ge
 router.get('/usuarios', middleware.authenticateToken, controller.getUser); //perfil
 
 // Registra un nuevo producto
-router.post('/productos', middleware.authenticateToken, controller.registerProduct);
+router.post('/productos', middleware.authenticateToken, upload.single('image'), controller.registerProduct);
 
 // Elimina un producto del usuario logeado
 router.delete('/user-productos/:producto_id', middleware.authenticateToken, controller.eliminarProducto);
 
 // Actualiza un producto del usuario logeado
-router.put('/productos/:producto_id', middleware.authenticateToken, controller.actualizarProducto);
+router.put('/productos/:producto_id', middleware.authenticateToken, upload.single('image'), controller.actualizarProducto);
 
 
 // Agrega un producto a favoritos del usuario logeado

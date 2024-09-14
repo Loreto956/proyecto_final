@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { CartContext } from '../contexts/CartContext';
 import { ProductsContext } from '../contexts/FavsContext';
-import { ENDPOINT } from "../config/constants"; 
+import { ENDPOINT, URLBASE } from "../config/constants"; 
 import { useAuth } from '../contexts/AuthContext';
 
 const DetalleProducto = () => {
@@ -69,7 +69,7 @@ const DetalleProducto = () => {
       <div className="row">
         <div className="col-md-6 d-flex flex-column align-items-center">
           <img
-            src={producto.imagen}
+            src={`${URLBASE}${producto.imagen}`}
             alt={producto.nombre}
             className="img-fluid mb-4"
             style={{ maxHeight: "400px" }}

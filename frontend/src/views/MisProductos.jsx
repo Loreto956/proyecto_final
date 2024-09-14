@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { ProductsContext } from "../contexts/FavsContext";
 import axios from 'axios';
 import '../styles/misProductos.css';
-import { ENDPOINT } from "../config/constants";
+import { ENDPOINT, URLBASE } from "../config/constants";
 import Cookies from 'js-cookie';
 
 const MisProductos = () => {
@@ -63,14 +63,16 @@ const MisProductos = () => {
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+      setImagenPreview(URL.createObjectURL(file));
       setNuevoProducto(prevState => ({
         ...prevState,
-        imagen: URL.createObjectURL(file),
+        imagen: file,
       }));
-      setImagenPreview(URL.createObjectURL(file));
     }
   };
 
@@ -79,27 +81,39 @@ const MisProductos = () => {
       const token = Cookies.get('token');
       const headers = {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
       };
 
-      const productoParaEnviar = {
-        ...nuevoProducto,
-        precio: parseFloat(nuevoProducto.precio),
-        stock: parseInt(nuevoProducto.stock, 10),
-      };
+      const formData = new FormData();
+      for (const key in nuevoProducto) {
+        if (key === 'imagen' && nuevoProducto[key] instanceof File) {
+          formData.append('image', nuevoProducto[key]);
+        } else if (nuevoProducto[key] !== null && nuevoProducto[key] !== undefined) {
+          formData.append(key, nuevoProducto[key]);
+        }
+      }
 
+      let response;
       if (nuevoProducto.id) {
-        await axios.put(`${ENDPOINT.actualizarProducto}/${nuevoProducto.id}`, productoParaEnviar, { headers });
+        response = await axios.put(`${ENDPOINT.actualizarProducto}/${nuevoProducto.id}`, formData, { 
+          headers: { ...headers, 'Content-Type': 'multipart/form-data' }
+        });
+      } else {
+        response = await axios.post(ENDPOINT.registrarProducto, formData, { 
+          headers: { ...headers, 'Content-Type': 'multipart/form-data' }
+        });
+      }
+
+      const productoActualizado = response.data;
+      if (nuevoProducto.id) {
         setMisProductos(prevProductos => prevProductos.map(producto =>
-          producto.id === nuevoProducto.id ? productoParaEnviar : producto
+          producto.id === productoActualizado.id ? productoActualizado : producto
         ));
         setProducts(prevProducts => prevProducts.map(producto =>
-          producto.id === nuevoProducto.id ? productoParaEnviar : producto
+          producto.id === productoActualizado.id ? productoActualizado : producto
         ));
       } else {
-        const { data } = await axios.post(ENDPOINT.registrarProducto, productoParaEnviar, { headers });
-        setMisProductos(prevProductos => [...prevProductos, data]);
-        setProducts(prevProducts => [...prevProducts, data]);
+        setMisProductos(prevProductos => [...prevProductos, productoActualizado]);
+        setProducts(prevProducts => [...prevProducts, productoActualizado]);
       }
 
       setNuevoProducto({
@@ -115,7 +129,7 @@ const MisProductos = () => {
       });
       setImagenPreview("");
     } catch (error) {
-      console.error("Error al agregar o actualizar el producto:", error);
+      console.error("Error al agregar o actualizar el producto:", error.response?.data || error.message);
     }
   };
 
@@ -168,7 +182,7 @@ const MisProductos = () => {
                 <td>{producto.precio}</td>
                 <td>{producto.stock}</td>
                 <td className="td-style">
-                  <img src={producto.imagen || "default.png"} alt={producto.nombre} className="img-style" />
+                  <img src={`${URLBASE}${producto.imagen}`} alt={producto.nombre} className="img-style" />
                 </td>
                 <td>
                   <button className="btn btn-outline-info me-4" onClick={() => editarProducto(producto.id)}>Editar</button>
@@ -239,7 +253,7 @@ const MisProductos = () => {
           onChange={handleFileChange}
           className="form-control mb-2"
         />
-        {imagenPreview && <img src={imagenPreview} alt="Preview" width="50" className="img-style" />}
+        {imagenPreview && <img src={`${URLBASE}${nuevoProducto.imagen}`} alt={nuevoProducto.nombre} className="img-style" />      }
         <button className="btn btn-warning mt-2" onClick={agregarProducto}>
           {nuevoProducto.id ? "Actualizar Producto" : "Agregar Producto"}
         </button>
