@@ -90,11 +90,15 @@ const MisProductos = () => {
 
       if (nuevoProducto.id) {
         await axios.put(`${ENDPOINT.actualizarProducto}/${nuevoProducto.id}`, productoParaEnviar, { headers });
+        setMisProductos(prevProductos => prevProductos.map(producto =>
+          producto.id === nuevoProducto.id ? productoParaEnviar : producto
+        ));
         setProducts(prevProducts => prevProducts.map(producto =>
           producto.id === nuevoProducto.id ? productoParaEnviar : producto
         ));
       } else {
         const { data } = await axios.post(ENDPOINT.registrarProducto, productoParaEnviar, { headers });
+        setMisProductos(prevProductos => [...prevProductos, data]);
         setProducts(prevProducts => [...prevProducts, data]);
       }
 
@@ -122,6 +126,7 @@ const MisProductos = () => {
         'Authorization': `Bearer ${token}`,
       };
       await axios.delete(`${ENDPOINT.eliminarProducto}/${id}`, { headers });
+      setMisProductos(prevProductos => prevProductos.filter(producto => producto.id !== id));
       setProducts(prevProducts => prevProducts.filter(producto => producto.id !== id));
     } catch (error) {
       console.error("Error al eliminar el producto:", error);
