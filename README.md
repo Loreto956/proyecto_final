@@ -1,7 +1,7 @@
 # Peluditos Shop E-commerce
 
 ## Descripción
-PetShop E-commerce es una aplicación web fullstack para una tienda en línea de productos para mascotas. Permite a los usuarios ver productos, agregarlos al carrito, gestionar sus propios productos y realizar compras.
+Peluditos E-commerce es una aplicación web fullstack para una tienda en línea de productos para mascotas. Permite a los usuarios ver productos, agregarlos al carrito, gestionar sus propios productos y realizar compras.
 
 ![alt text](peluditos.png)
 
