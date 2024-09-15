@@ -142,9 +142,12 @@ const actualizarProducto = async (req, res) => {
 
 const getProducts = async (req, res) => {
     try {
-        const productos = await model.listarProduct();
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 9;
+        const productos = await model.listarProduct({ page, limit });
         res.json(productos);
     } catch (error) {
+        console.error('Error al obtener productos:', error.message);
         res.status(500).json({ error: 'Error al obtener productos' });
     }
 };

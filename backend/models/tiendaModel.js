@@ -1,4 +1,5 @@
 import pool from '../config/db.js';
+import format from 'pg-format';
 
 
 //Obtiene el usuario por email
@@ -105,19 +106,36 @@ const actualizarProducto = async (producto_id, usuario_id, datosActualizados) =>
 };
 
 
-const listarProduct = async () => {
+
+const listarProduct = async ({ page = 1, limit = 9 }) => {
     try {
-        const result = await pool.query('SELECT * FROM productos');
-        if (result.rowCount > 0) {
-            return result.rows;
-        } else {
-            return { success: false, message: 'No se encontraron productos.' };
-        }
+        const pageNumber = parseInt(page, 10) || 1;
+        const limitNumber = parseInt(limit, 10) || 9;
+        const offset = (pageNumber - 1) * limitNumber;
+
+        const query = format(
+            'SELECT * FROM productos ORDER BY fecha_creacion DESC LIMIT %s OFFSET %s',
+            limitNumber,
+            offset
+        );
+        const result = await pool.query(query);
+
+        const totalQuery = 'SELECT COUNT(*) FROM productos';
+        const totalResult = await pool.query(totalQuery);
+        const totalCount = parseInt(totalResult.rows[0].count, 10);
+
+        return {
+            products: result.rows,
+            page: pageNumber,
+            limit: limitNumber,
+            totalCount: totalCount
+        };
     } catch (error) {
-        console.error('Error al listar productos:', error.message);
-        throw error; 
+        console.error('Error al listar productos con paginación:', error.message);
+        throw error;
     }
 };
+
 
 const detalleProductById = async (producto_id) => {
     try {
